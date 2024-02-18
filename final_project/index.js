@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
+const config = require('./config'); // Adjust the path based on your project structure
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
@@ -8,7 +9,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/customer", session({ secret: "fingerprint_customer", resave: true, saveUninitialized: true }));
+app.use("/customer", session({ secret: config.sessionSecret, resave: true, saveUninitialized: true }));
 
 // Authentication middleware
 app.use("/customer/auth/*", function auth(req, res, next) {
@@ -19,7 +20,7 @@ app.use("/customer/auth/*", function auth(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, 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);
+    const decoded = jwt.verify(token, config.jwtSecret);
     req.user = decoded; // Store user information in the request object
     next();
   } catch (error) {
